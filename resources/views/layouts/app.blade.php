@@ -23,7 +23,7 @@
         <x-sidebar />
 
         {{-- Main Application Area --}}
-        <div class="flex-1">
+        <div class="min-w-0 flex-1">
 
             {{-- Top Navigation --}}
             @include('layouts.navigation')
@@ -38,7 +38,7 @@
             @endisset
 
             {{-- Page Content --}}
-            <main>
+            <main class="min-w-0 w-full">
                 {{ $slot }}
             </main>
 

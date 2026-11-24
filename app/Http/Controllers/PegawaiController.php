@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
-use App\Models\Satker;
+use App\Models\SatuanKerja;
 use Illuminate\Http\Request;
 
 class PegawaiController extends Controller
@@ -13,9 +13,14 @@ class PegawaiController extends Controller
      */
     public function index()
     {
-        $pegawais = Pegawai::with('satker')->latest()->get();
+        $pegawais = Pegawai::with('satuanKerja')
+            ->latest()
+            ->get();
 
-        return view('pegawai.index', compact('pegawais'));
+        return view(
+            'pegawai.index',
+            compact('pegawais')
+        );
     }
 
     /**
@@ -23,9 +28,12 @@ class PegawaiController extends Controller
      */
     public function create()
     {
-        $satkers = Satker::all();
+        $satuanKerjas = SatuanKerja::all();
 
-        return view('pegawai.create', compact('satkers'));
+        return view(
+            'pegawai.create',
+            compact('satuanKerjas')
+        );
     }
 
     /**
@@ -34,26 +42,69 @@ class PegawaiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'satker_id' => ['required', 'exists:satkers,id'],
-            'nip' => ['required', 'unique:pegawais,nip'],
-            'nama_pegawai' => ['required'],
-            'jabatan' => ['required'],
-            'golongan' => ['required'],
+
+            'id_satker' => [
+                'required',
+                'exists:satuan_kerja,id_satker',
+            ],
+
+            'nip' => [
+                'required',
+                'unique:pegawai,nip',
+            ],
+
+            'nip_baru' => [
+                'nullable',
+                'unique:pegawai,nip_baru',
+            ],
+
+            'nama_lengkap' => [
+                'required',
+            ],
+
+            'pangkat' => [
+                'nullable',
+            ],
+
+            'gol_ruang' => [
+                'nullable',
+            ],
+
+            'tipe_jabatan' => [
+                'nullable',
+            ],
+
+            'tampil_jabatan' => [
+                'nullable',
+            ],
+
+            'keterangan' => [
+                'nullable',
+            ],
+
         ]);
 
         Pegawai::create($validated);
 
         return redirect()
             ->route('pegawai.index')
-            ->with('success', 'Data Pegawai berhasil ditambahkan.');
+            ->with(
+                'success',
+                'Data Pegawai berhasil ditambahkan.'
+            );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Pegawai $pegawai)
     {
-        //
+        $pegawai->load('satuanKerja');
+
+        return view(
+            'pegawai.show',
+            compact('pegawai')
+        );
     }
 
     /**
@@ -61,29 +112,76 @@ class PegawaiController extends Controller
      */
     public function edit(Pegawai $pegawai)
     {
-        $satkers = Satker::all();
+        $satuanKerjas = SatuanKerja::all();
 
-        return view('pegawai.edit', compact('pegawai', 'satkers'));
+        return view(
+            'pegawai.edit',
+            compact(
+                'pegawai',
+                'satuanKerjas'
+            )
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Pegawai $pegawai)
-    {
+    public function update(
+        Request $request,
+        Pegawai $pegawai
+    ) {
+
         $validated = $request->validate([
-            'satker_id' => ['required', 'exists:satkers,id'],
-            'nip' => ['required', 'unique:pegawais,nip,'.$pegawai->id],
-            'nama_pegawai' => ['required'],
-            'jabatan' => ['required'],
-            'golongan' => ['required'],
+
+            'id_satker' => [
+                'required',
+                'exists:satuan_kerja,id_satker',
+            ],
+
+            'nip' => [
+                'required',
+                'unique:pegawai,nip,'.$pegawai->id_pegawai.',id_pegawai',
+            ],
+
+            'nip_baru' => [
+                'nullable',
+                'unique:pegawai,nip_baru,'.$pegawai->id_pegawai.',id_pegawai',
+            ],
+
+            'nama_lengkap' => [
+                'required',
+            ],
+
+            'pangkat' => [
+                'nullable',
+            ],
+
+            'gol_ruang' => [
+                'nullable',
+            ],
+
+            'tipe_jabatan' => [
+                'nullable',
+            ],
+
+            'tampil_jabatan' => [
+                'nullable',
+            ],
+
+            'keterangan' => [
+                'nullable',
+            ],
+
         ]);
 
         $pegawai->update($validated);
 
         return redirect()
             ->route('pegawai.index')
-            ->with('success', 'Data Pegawai berhasil diperbarui.');
+            ->with(
+                'success',
+                'Data Pegawai berhasil diperbarui.'
+            );
     }
 
     /**
@@ -95,6 +193,9 @@ class PegawaiController extends Controller
 
         return redirect()
             ->route('pegawai.index')
-            ->with('success', 'Data Pegawai berhasil dihapus.');
+            ->with(
+                'success',
+                'Data Pegawai berhasil dihapus.'
+            );
     }
 }

@@ -1,3 +1,4 @@
+
 <x-app-layout>
 
     <x-slot name="header">
@@ -10,17 +11,16 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
 
+                    <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold">
                             Daftar Satuan Kerja
                         </h3>
 
-                        <a href="{{ route('satker.create') }}"
-                        class="bg-blue-600 text-white px-4 py-2 rounded">
-                            Tambah Satker
+                        <a href="{{ route('satuan-kerja.create') }}"
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                            + Tambah Satker
                         </a>
-
                     </div>
 
                     @if(session('success'))
@@ -29,75 +29,96 @@
                         </div>
                     @endif
 
-                    <table class="w-full border">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border px-4 py-2">
-                                    No
-                                </th>
+                    @if(session('error'))
+                        <div class="mb-4 rounded bg-red-100 px-4 py-3 text-red-800">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
-                                <th class="border px-4 py-2">
-                                    Kode Satker
-                                </th>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-gray-300">
 
-                                <th class="border px-4 py-2">
-                                    Nama Satker
-                                </th>
-
-                                <th class="border px-4 py-2">
-                                    Aksi
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @forelse ($satkers as $satker)
-                                <tr>
-                                    <td class="border px-4 py-2 text-center">
-                                        {{ $loop->iteration }}
-                                    </td>
-
-                                    <td class="border px-4 py-2">
-                                        {{ $satker->kode_satker }}
-                                    </td>
-
-                                    <td class="border px-4 py-2">
-                                        {{ $satker->nama_satker }}
-                                    </td>
-
-                                    <td class="border px-4 py-2">
-
-                                        <a href="{{ route('satker.edit', $satker->id) }}" class="text-blue-600">
-                                            Edit
-                                        </a>
-
-                                        <form action="{{ route('satker.destroy', $satker->id) }}" method="POST"
-                                            class="inline">
-
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="text-red-600 ml-3"
-                                                onclick="return confirm('Hapus data?')">
-
-                                                Hapus
-
-                                            </button>
-
-                                        </form>
-                                    </td>
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border px-4 py-3">No</th>
+                                    <th class="border px-4 py-3">Kode Satker</th>
+                                    <th class="border px-4 py-3">Nama Satker</th>
+                                    <th class="border px-4 py-3">Status</th>
+                                    <th class="border px-4 py-3">Aksi</th>
                                 </tr>
+                            </thead>
 
-                            @empty
+                            <tbody>
 
-                                <tr>
-                                    <td colspan="4" class="border px-4 py-4 text-center">
-                                        Belum ada data.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                @forelse ($satuanKerjas as $satuanKerja)
+
+                                    <tr class="hover:bg-gray-50">
+
+                                        <td class="border px-4 py-3 text-center">
+                                            {{ $loop->iteration }}
+                                        </td>
+
+                                        <td class="border px-4 py-3">
+                                            {{ $satuanKerja->kode_satker }}
+                                        </td>
+
+                                        <td class="border px-4 py-3">
+                                            {{ $satuanKerja->nama_satker }}
+                                        </td>
+
+                                        <td class="border px-4 py-3 text-center">
+                                            @if(strtolower($satuanKerja->status) === 'aktif')
+                                                <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">
+                                                    Aktif
+                                                </span>
+                                            @else
+                                                <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
+                                                    Nonaktif
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        <td class="border px-4 py-3 text-center whitespace-nowrap">
+
+                                            <a href="{{ route('satuan-kerja.edit', $satuanKerja->id_satker) }}"
+                                               class="text-blue-600 hover:text-blue-800">
+                                                Edit
+                                            </a>
+
+                                            <form action="{{ route('satuan-kerja.destroy', $satuanKerja->id_satker) }}"
+                                                  method="POST"
+                                                  class="inline">
+
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit"
+                                                        class="text-red-600 hover:text-red-800 ml-3"
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data satuan kerja ini?')">
+                                                    Hapus
+                                                </button>
+
+                                            </form>
+
+                                        </td>
+
+                                    </tr>
+
+                                @empty
+
+                                    <tr>
+                                        <td colspan="5" class="border px-4 py-6 text-center text-gray-500">
+                                            Belum ada data satuan kerja.
+                                        </td>
+                                    </tr>
+
+                                @endforelse
+
+                            </tbody>
+
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>

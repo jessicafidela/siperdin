@@ -6,16 +6,36 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pegawai extends Model
 {
+    protected $table = 'pegawai';
+
+    protected $primaryKey = 'id_pegawai';
+
     protected $fillable = [
-        'satker_id',
+        'id_satker',
         'nip',
-        'nama_pegawai',
-        'jabatan',
-        'golongan',
+        'nip_baru',
+        'nama_lengkap',
+        'pangkat',
+        'gol_ruang',
+        'tipe_jabatan',
+        'tampil_jabatan',
+        'keterangan',
     ];
 
-    public function satker()
+    public function satuanKerja()
     {
-        return $this->belongsTo(Satker::class);
+        return $this->belongsTo(
+            SatuanKerja::class,
+            'id_satker',
+            'id_satker'
+        );
+    }
+
+    public function user()
+    {
+        return $this->hasOne(
+            User::class,
+            'id_pegawai'
+        );
     }
 }

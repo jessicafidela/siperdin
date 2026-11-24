@@ -4,51 +4,44 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = [
-            [
-                'name' => 'Superadmin SIPERDIN',
-                'email' => 'superadmin@siperdin.test',
-                'password' => 'password123',
-                'role' => 'Superadmin',
-            ],
-            [
-                'name' => 'Operator Data SIPERDIN',
-                'email' => 'operator.data@siperdin.test',
-                'password' => 'password123',
-                'role' => 'Operator Data',
-            ],
-            [
-                'name' => 'Operator Satker SIPERDIN',
-                'email' => 'operator.satker@siperdin.test',
-                'password' => 'password123',
-                'role' => 'Operator Satker',
-            ],
-            [
-                'name' => 'Admin Keuangan SIPERDIN',
-                'email' => 'admin.keuangan@siperdin.test',
-                'password' => 'password123',
-                'role' => 'Admin Keuangan',
-            ],
-        ];
+        $username = trim((string) config('siperdin.bootstrap_admin.username'));
+        $password = (string) config('siperdin.bootstrap_admin.password');
 
-        foreach ($users as $data) {
-            $user = User::firstOrCreate(
-                [
-                    'email' => $data['email'],
-                ],
-                [
-                    'name' => $data['name'],
-                    'password' => Hash::make($data['password']),
-                ]
+        if ($username === '' && $password === '') {
+            $this->command?->warn(
+                'Superadmin tidak dibuat. Isi SIPERDIN_SUPERADMIN_USERNAME dan SIPERDIN_SUPERADMIN_PASSWORD di .env, lalu jalankan seeder kembali.'
             );
 
-            $user->assignRole($data['role']);
+            return;
         }
+
+        if ($username === '' || $password === '') {
+            throw new RuntimeException(
+                'Username dan password bootstrap Superadmin harus diisi bersama-sama di .env.'
+            );
+        }
+
+        if (strlen($password) < 12) {
+            throw new RuntimeException('Password bootstrap Superadmin minimal 12 karakter.');
+        }
+
+        $user = User::firstOrCreate(
+            ['username' => $username],
+            [
+                'id_pegawai' => null,
+                'password' => $password,
+                'status' => 'aktif',
+            ]
+        );
+
+        $user->syncRoles(['Superadmin']);
+
+        $this->command?->info('Akun bootstrap Superadmin tersedia: '.$username);
     }
 }

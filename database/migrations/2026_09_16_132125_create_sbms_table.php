@@ -6,37 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('sbms', function (Blueprint $table) {
-
-            $table->id();
-            $table->string('kode_sbm')->unique();
-            $table->string('kategori');
-            $table->string('nama_biaya');
-            $table->string('satuan');
-            $table->decimal('nilai', 15, 2);
-            $table->enum('jenis_batas', [
-                'batas_tertinggi',
-                'dapat_dilampaui',
-            ]);
-            $table->year('tahun_anggaran');
-            $table->enum('status', [
-                'aktif',
-                'tidak_aktif',
-            ])->default('aktif');
+        Schema::create('standar_biaya_masukan', function (Blueprint $table) {
+            $table->increments('id_sbm');
+            $table->year('tahun_berlaku');
+            $table->string('jenis_biaya', 50);
+            $table->string('gol_ruang', 20)->nullable();
+            $table->string('lokasi', 100)->nullable();
+            $table->decimal('nilai_biaya', 15, 2);
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('sbms');
+        Schema::dropIfExists('standar_biaya_masukan');
     }
 };

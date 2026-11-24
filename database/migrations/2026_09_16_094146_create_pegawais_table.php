@@ -6,38 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('pegawais', function (Blueprint $table) {
-
-            $table->id();
-
-            $table->foreignId('satker_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
-            $table->string('nip')
-                ->unique();
-
-            $table->string('nama_pegawai');
-
-            $table->string('jabatan');
-
-            $table->string('golongan');
-
+        Schema::create('pegawai', function (Blueprint $table) {
+            $table->increments('id_pegawai');
+            $table->unsignedInteger('id_satker');
+            $table->string('nip', 30)->nullable()->unique();
+            $table->string('nip_baru', 30)->nullable()->unique();
+            $table->string('nama_lengkap', 100);
+            $table->string('pangkat', 50)->nullable();
+            $table->string('gol_ruang', 20)->nullable();
+            $table->string('tipe_jabatan', 50)->nullable();
+            $table->string('tampil_jabatan', 100)->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
 
+            $table->foreign('id_satker')
+                ->references('id_satker')->on('satuan_kerja')
+                ->restrictOnDelete();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('pegawais');
+        Schema::dropIfExists('pegawai');
     }
 };

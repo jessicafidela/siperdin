@@ -40,43 +40,68 @@
                             <th class="border px-4 py-2">Aksi</th>
                         </tr>
                     </thead>
+<tbody>
+    @forelse ($pegawais as $pegawai)
+        <tr>
+            <td class="border px-4 py-2 text-center">
+                {{ $loop->iteration }}
+            </td>
 
-                    <tbody>
-                        @forelse ($pegawais as $pegawai)
-                            <tr>
-                                <td class="border px-4 py-2 text-center">{{ $loop->iteration }}</td>
-                                <td class="border px-4 py-2">{{ $pegawai->nip }}</td>
-                                <td class="border px-4 py-2">{{ $pegawai->nama_pegawai }}</td>
-                                <td class="border px-4 py-2">{{ $pegawai->satker->nama_satker }}</td>
-                                <td class="border px-4 py-2">{{ $pegawai->jabatan }}</td>
-                                <td class="border px-4 py-2">{{ $pegawai->golongan }}</td>
-                                <td class="border px-4 py-2">
+            <td class="border px-4 py-2">
+                {{ $pegawai->nip }}
+            </td>
 
-                                    <a href="{{ route('pegawai.edit', $pegawai->id) }}" class="text-blue-600">
-                                        Edit
-                                    </a>
+            <td class="border px-4 py-2">
+                {{ $pegawai->nama_lengkap }}
+            </td>
 
-                                    <form action="{{ route('pegawai.destroy', $pegawai->id) }}" method="POST" class="inline">
+            <td class="border px-4 py-2">
+                {{ $pegawai->satuanKerja?->nama_satker ?? '—' }}
+            </td>
 
-                                        @csrf
-                                        @method('DELETE')
+            <td class="border px-4 py-2">
+                {{ $pegawai->tampil_jabatan ?? '—' }}
+            </td>
 
-                                        <button type="submit" class="text-red-600 ml-3" onclick="return confirm('Hapus data pegawai?')">
-                                            Hapus
-                                        </button>
+            <td class="border px-4 py-2">
+                {{ $pegawai->gol_ruang ?? '—' }}
+            </td>
 
-                                    </form>
+            <td class="border px-4 py-2">
 
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="border px-4 py-4 text-center">
-                                    Belum ada data.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
+                <a href="{{ route('pegawai.edit', $pegawai->id_pegawai) }}"
+                   class="text-blue-600">
+                    Edit
+                </a>
+
+                <form action="{{ route('pegawai.destroy', $pegawai->id_pegawai) }}"
+                      method="POST"
+                      class="inline">
+
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit"
+                            class="text-red-600 ml-3"
+                            onclick="return confirm('Hapus data pegawai?')">
+                        Hapus
+                    </button>
+
+                </form>
+
+            </td>
+        </tr>
+
+    @empty
+
+        <tr>
+            <td colspan="7" class="border px-4 py-4 text-center">
+                Belum ada data pegawai.
+            </td>
+        </tr>
+
+    @endforelse
+</tbody>
                 </table>
 
             </div>
